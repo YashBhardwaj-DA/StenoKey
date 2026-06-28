@@ -4,7 +4,7 @@ A clean, distraction-free touch-typing trainer built for stenographers, transcri
 
 No sign-up, no backend, no tracking. Everything runs in the browser, and the only thing ever saved is your own best scores — on your own device.
 
-**Live demo:** _add your deployed URL here_
+**Live demo:** (https://stenokey.netlify.app/)
 
 ---
 
