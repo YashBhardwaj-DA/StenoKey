@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StenoKey — Touch Typing & Stenography Trainer</title>
+<meta name="description" content="A clean, distraction-free touch-typing trainer for stenographers. Practice home-row drills, sentences, capitalization, and full paragraphs with live WPM and accuracy tracking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===== HEADER ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">⌁</span>
+      <span class="brand-name">StenoKey</span>
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="Main sections">
+      <button class="tab is-active" data-view="practice" role="tab" aria-selected="true">Practice</button>
+      <button class="tab" data-view="modules" role="tab" aria-selected="false">Modules</button>
+      <button class="tab" data-view="stats" role="tab" aria-selected="false">Stats</button>
+    </nav>
+
+    <div class="topbar-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <svg id="iconSun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg id="iconMoon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== PRACTICE VIEW ===== -->
+  <main id="view-practice" class="view is-active">
+
+    <div class="practice-shell">
+
+      <!-- Module picker strip -->
+      <div class="module-strip">
+        <label for="moduleSelect" class="module-strip-label">Module</label>
+        <select id="moduleSelect" class="module-select"></select>
+
+        <label for="lineSelect" class="module-strip-label">Drill</label>
+        <select id="lineSelect" class="module-select"></select>
+
+        <button id="shuffleBtn" class="ghost-btn" title="Pick a random drill from this module">Shuffle</button>
+        <button id="restartBtn" class="ghost-btn" title="Restart this drill">Restart</button>
+      </div>
+
+      <!-- Live meters -->
+      <div class="meter-row" aria-live="polite">
+        <div class="meter">
+          <span class="meter-value" id="wpmValue">0</span>
+          <span class="meter-label">WPM</span>
+        </div>
+        <div class="meter">
+          <span class="meter-value" id="accValue">100<span class="meter-unit">%</span></span>
+          <span class="meter-label">Accuracy</span>
+        </div>
+        <div class="meter">
+          <span class="meter-value" id="errValue">0</span>
+          <span class="meter-label">Errors</span>
+        </div>
+        <div class="meter">
+          <span class="meter-value" id="timeValue">0<span class="meter-unit">s</span></span>
+          <span class="meter-label">Time</span>
+        </div>
+        <div class="meter meter-best">
+          <span class="meter-value" id="bestValue">—</span>
+          <span class="meter-label">Best WPM <span class="meter-sub" id="bestModuleLabel"></span></span>
+        </div>
+      </div>
+
+      <!-- Typing field -->
+      <div class="type-field-wrap">
+        <div class="type-field" id="typeField" tabindex="0" aria-label="Typing practice area">
+          <div class="type-text" id="typeText"></div>
+          <div class="type-overlay" id="typeOverlay">
+            <span>Click here and start typing to begin</span>
+          </div>
+        </div>
+        <input id="hiddenInput" class="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-hidden="true">
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <!-- Tip / suggestion strip -->
+      <div class="tip-strip" id="tipStrip">
+        <span class="tip-tag">Tip</span>
+        <span id="tipText">Keep your wrists level and eyes on the screen, not the keyboard.</span>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ===== MODULES VIEW ===== -->
+  <main id="view-modules" class="view">
+    <div class="modules-shell">
+      <div class="modules-intro">
+        <h1>Modules</h1>
+        <p>Nine drills, easiest to hardest. Pick one to load it straight into Practice — switch freely, nothing is ever locked.</p>
+      </div>
+      <div class="module-grid" id="moduleGrid"></div>
+    </div>
+  </main>
+
+  <!-- ===== STATS VIEW ===== -->
+  <main id="view-stats" class="view">
+    <div class="stats-shell">
+      <div class="modules-intro">
+        <h1>Stats</h1>
+        <p>Your best WPM per module, kept locally on this device. Nothing leaves your browser, and nothing is sent anywhere.</p>
+      </div>
+      <div class="stats-table-wrap">
+        <table class="stats-table" id="statsTable">
+          <thead>
+            <tr><th>Module</th><th>Best WPM</th><th>Best Accuracy</th><th>Sessions</th></tr>
+          </thead>
+          <tbody id="statsBody"></tbody>
+        </table>
+      </div>
+      <button class="ghost-btn danger" id="clearStatsBtn">Clear all saved stats</button>
+    </div>
+  </main>
+
+  <!-- ===== RESULT MODAL ===== -->
+  <div class="modal-backdrop" id="resultBackdrop">
+    <div class="modal" role="dialog" aria-label="Drill results">
+      <p class="modal-eyebrow">Drill complete</p>
+      <h2 class="modal-title" id="resultHeadline">Nice work.</h2>
+      <div class="modal-stats">
+        <div><span id="resultWpm">0</span><label>WPM</label></div>
+        <div><span id="resultAcc">100%</span><label>Accuracy</label></div>
+        <div><span id="resultErr">0</span><label>Errors</label></div>
+        <div><span id="resultTime">0s</span><label>Time</label></div>
+      </div>
+      <p class="modal-note" id="resultNote"></p>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="modalCloseBtn">Close</button>
+        <button class="primary-btn" id="modalNextBtn">Next drill</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>StenoKey · practice runs entirely in your browser · no data leaves your device</span>
+  </footer>
+
+</div>
+
+<script src="modules.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
